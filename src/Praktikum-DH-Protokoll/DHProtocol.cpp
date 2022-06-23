@@ -40,11 +40,11 @@ DHProtocol::DHProtocol(const string &param_file) {
     p = encoder.getInteger(1);
     alpha = encoder.getInteger(2);
 
-    /*
+
      cout << "q = " << q << endl;
      cout << "p = " << p << endl;
      cout << "alpha = " << alpha << endl;
-     */
+
 
 }
 
@@ -69,11 +69,8 @@ void DHProtocol::alice(const string &host, const string &port) {
          */
         MessageEncoder me;
         string message = "Hello Server, I am Alice!";
-        Integer z1("10232");
-        Integer z2("8934");
         me.append(message);
-        me.append(z1);
-        me.append(z2);
+
 
         bob_stream << me.encode() << endl;
         /*
@@ -86,7 +83,7 @@ void DHProtocol::alice(const string &host, const string &port) {
 
         cout << "Acting as Alice." << endl;
 
-}
+}}
 
 
 void DHProtocol::serverBob(const string &port) {
@@ -114,10 +111,33 @@ void DHProtocol::serverBob(const string &port) {
 
 }
 
-bool DHProtocol::bob(tcp::iostream &alice_strm) {
+bool DHProtocol::bob(tcp::iostream &alice_stream) {
     /*
      * Aufgabe 4c)
      */
+    cout << "Accepting incoming connection." << endl;
+    /*
+     * Receiving a message from Alice.
+     * IMPORTANT: Alice must terminate the message with an endl.
+     */
+    string message;
+    getline(alice_stream, message);
+    MessageEncoder me;
+    me.decode(message);
+    message = me.getString(0);
+
+    cout << "Got: " << message  << endl;
+
+    /*
+     * Send a message to Alice.
+     * IMPORTANT: Terminate the message with an endl.
+     */
+    message = "Hello from Bob.";
+    alice_stream << message << endl;
+
+
+
+    return true;
 
     return true;
 }
@@ -153,7 +173,9 @@ bool DHProtocol::oscar(tcp::iostream &alice_strm, const string &host, const stri
 
     /*
   * Alice is the client and connects the server Bob using
-  * an ASIO TCP-IOStream objec/tcp::iostream bob_stream(tcp::resolver::query{host, port});
+  * an ASIO TCP-IOStream objec/
+     */
+    tcp::iostream bob_stream(tcp::resolver::query{host, port});
 
     if (!bob_stream) {
         // Connection could not established => Error!
@@ -163,14 +185,11 @@ bool DHProtocol::oscar(tcp::iostream &alice_strm, const string &host, const stri
          * Send a message to Bob.
          * IMPORTANT: The endl is used to mark the end of the message.
          */
-    /*
+
         MessageEncoder me;
         string message = "Hello Server, I am Alice!";
-        Integer z1("10232");
-        Integer z2("8934");
         me.append(message);
-        me.append(z1);
-        me.append(z2);
+
 
         bob_stream << me.encode() << endl;
         /*
@@ -178,7 +197,7 @@ bool DHProtocol::oscar(tcp::iostream &alice_strm, const string &host, const stri
          *
          * Bob must terminate the message with an endl.
          */
-        getline(bob_stream, message);
+       getline(bob_stream, message);
         cout << "Got: " << message << endl;
 
         cout << "Acting as Alice." << endl;

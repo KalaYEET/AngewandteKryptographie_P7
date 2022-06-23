@@ -13,7 +13,7 @@ void help(string name) {
 }
 
 int main(int argc, char **argv) {
-	DHProtocol dh("../../data/dhparams.txt");
+	DHProtocol dh("/home/nils/Documents/AngewandteKryptographie_P7/data/dhparams.txt");//"../../data/dhparams.txt"
 
 	if (argc < 2) {
 		help(argv[0]);
