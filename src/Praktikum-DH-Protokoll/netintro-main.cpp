@@ -38,8 +38,11 @@ void alice(string host, string port) {
          * Bob must terminate the message with an endl.
          */
         getline(bob_stream, message);
-        cout << "Got: " << message << endl;
-
+        me.decode(message);
+       Integer x = me.getInteger(0);
+       message = me.getString(1);
+       cout << "Got: " << message << endl;
+        cout << "Got: " << x << endl;
         /*
          * Aufgabe 3c.
          */
@@ -63,13 +66,15 @@ bool bob(tcp::iostream &alice_stream) {
     Integer z1 = me.getInteger(1);
     Integer z2 = me.getInteger(2);
     cout << "Got: " << message  << " and: " << z1+z2 << endl;
-
+    me.clear();
+    me.append(z1+z2);
     /*
      * Send a message to Alice.
      * IMPORTANT: Terminate the message with an endl.
      */
     message = "Hello from Bob.";
-    alice_stream << message << endl;
+    me.append(message);
+    alice_stream << me.encode() << endl;
 
     /*
      * Aufgabe 3c.
@@ -108,6 +113,8 @@ void serverBob(string port) {
         cout << err.what() << endl;
     }
 }
+
+
 
 void help(string name) {
     cout << "Usage: " << name << " <mode>" << endl << endl;
